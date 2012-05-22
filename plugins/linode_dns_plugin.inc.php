@@ -164,7 +164,7 @@ class linode_dns_plugin {
 
 					if ($zone['active'] == 'Y') {
 						// the ns has changed, update the record, otherwise create a new record
-						if($old_zone['ns'] != $zone['ns']) {
+						if($old_zone['ns'] != $zone['ns']  && !empty($old_zone['ns'])) {
 							foreach ($domains['DATA'] as $d) {
 								if ($d['DOMAIN'] == $domain) {
 									$response = $linode->domain_update(array('DomainID' => $d['DOMAINID'], 'master_ips'=>$master_ip));
@@ -189,7 +189,7 @@ class linode_dns_plugin {
 					}
 
 					// the domain name has changed, delete the old dns slave
-					if($old_zone['origin'] != $zone['origin'] || $zone['active'] != 'Y') {
+					if(($old_zone['origin'] != $zone['origin'] && !empty($old_zone['origin'])) || $zone['active'] != 'Y') {
 						$this->delete_linode_dns($data, $domains);
 					}
 				} catch (Services_Linode_Exception $e) {
